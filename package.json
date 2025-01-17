@@ -1,0 +1,45 @@
+{
+  "name": "mcp-kagi-search",
+  "version": "0.0.1",
+  "description": "MCP server for integrating Kagi search API with LLMs",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "mcp-kagi-search": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc && chmod +x dist/index.js",
+    "start": "node dist/index.js",
+    "dev": "npx @modelcontextprotocol/inspector dist/index.js",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "pnpm run build && changeset publish"
+  },
+  "keywords": [
+    "mcp",
+    "tavily",
+    "search",
+    "ai",
+    "llm",
+    "model-context-protocol",
+    "web-search",
+    "semantic-search",
+    "api"
+  ],
+  "author": "Scott Spence",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.1.1"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.11",
+    "@types/node": "^22.10.7",
+    "typescript": "^5.7.3"
+  }
+}
