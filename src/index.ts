@@ -64,7 +64,8 @@ class KagiSearchServer {
 				tools: [
 					{
 						name: 'kagi_search',
-						description: 'Search the web using Kagi Search API. Returns high-quality search results without ads or tracking. Use this tool when you need factual information from the web, especially for recent events, technical topics, or when you need multiple sources.',
+						description:
+							'Search the web using Kagi Search API. Returns high-quality search results without ads or tracking. Use this tool when you need factual information from the web, especially for recent events, technical topics, or when you need multiple sources.',
 						inputSchema: {
 							type: 'object',
 							properties: {
@@ -146,23 +147,60 @@ class KagiSearchServer {
 								no_cache: args.no_cache,
 							});
 
+							// Log the raw response structure
+							console.error(
+								'Search API Response:',
+								JSON.stringify(result, null, 2),
+							);
+
 							// Format the search results to be more AI-friendly
-							const formattedResults = {
-								meta: {
-									total_results: result.meta.total,
-									// api_balance might be present in the actual response but not in our types
-									api_balance: (result.meta as any).api_balance,
-								},
-								results: result.data.results
-									.filter((item: KagiSearchResult) => true) // Keep all results
-									.map((item: KagiSearchResult) => ({
-										title: item.title,
-										url: item.url,
-										snippet: item.snippet,
-										// published might be present in the actual response but not in our types
-										published: (item as any).published || null,
-									})),
-							};
+							// The actual structure seems to be different from our types
+							// Let's handle both possible structures
+							let formattedResults;
+
+							try {
+								// Check if data is an array (as seen in the actual response)
+								if (Array.isArray(result.data)) {
+									formattedResults = {
+										meta: {
+											total_results:
+												result.meta.total || result.data.length,
+											api_balance: (result.meta as any).api_balance,
+										},
+										results: result.data
+											.filter((item: any) => item.t === 0) // Filter out non-result items (like related searches)
+											.map((item: any) => ({
+												title: item.title,
+												url: item.url,
+												snippet: item.snippet,
+												published: item.published || null,
+											})),
+									};
+								} else {
+									// Handle the structure as defined in our types
+									formattedResults = {
+										meta: {
+											total_results: result.meta.total,
+											api_balance: (result.meta as any).api_balance,
+										},
+										results: result.data.results.map(
+											(item: KagiSearchResult) => ({
+												title: item.title,
+												url: item.url,
+												snippet: item.snippet,
+												published: (item as any).published || null,
+											}),
+										),
+									};
+								}
+							} catch (error) {
+								// If formatting fails, return the raw result
+								console.error(
+									'Error formatting search results:',
+									error,
+								);
+								formattedResults = result;
+							}
 
 							return {
 								content: [
@@ -190,11 +228,18 @@ class KagiSearchServer {
 							// Format the FastGPT results to be more AI-friendly
 							const formattedResults = {
 								answer: result.data.output,
-								sources: result.data.references?.map((ref: { title: string; url: string; snippet?: string }) => ({
-									title: ref.title,
-									url: ref.url,
-									snippet: ref.snippet || null,
-								})) || [],
+								sources:
+									result.data.references?.map(
+										(ref: {
+											title: string;
+											url: string;
+											snippet?: string;
+										}) => ({
+											title: ref.title,
+											url: ref.url,
+											snippet: ref.snippet || null,
+										}),
+									) || [],
 								meta: {
 									// api_balance might be present in the actual response but not in our types
 									api_balance: (result.meta as any).api_balance,
