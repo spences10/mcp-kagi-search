@@ -1,6 +1,6 @@
 {
   "name": "mcp-kagi-search",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "MCP server for integrating Kagi search API with LLMs",
   "type": "module",
   "main": "dist/index.js",
