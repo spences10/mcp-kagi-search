@@ -1,5 +1,17 @@
 # mcp-kagi-search
 
+---
+
+## ⚠️ Notice
+
+**This repository is no longer maintained.**
+
+The functionality of this tool is now available in [mcp-omnisearch](https://github.com/spences10/mcp-omnisearch), which combines multiple MCP tools in one unified package.
+
+Please use [mcp-omnisearch](https://github.com/spences10/mcp-omnisearch) instead.
+
+---
+
 A Model Context Protocol (MCP) server that provides access to Kagi's premium search and AI capabilities, offering high-quality search results without ads or tracking and AI-powered responses with source citations.
 
 ⚠️ The Search API is in closed beta and is currently available to Kagi Business (Team) plan users ⚠️
